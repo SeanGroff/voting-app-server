@@ -16,10 +16,10 @@ exports.validateSignUp = (req, res, next) => {
   // From browser dev tools user can remove required form input attr! This protects against that
   req.checkBody('password', 'Password cannot be blank').notEmpty();
   req
-    .checkBody('passwordConfirm', 'Confirm password cannot be blank')
+    .checkBody('confirmPassword', 'Confirm password cannot be blank')
     .notEmpty();
   req
-    .checkBody('passwordConfirm', 'Oops, your passwords do not match')
+    .checkBody('confirmPassword', 'Oops, your passwords do not match')
     .equals(req.body.password);
 
   // Will check all the methods above and return an array of errors.

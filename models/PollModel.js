@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const poll = new schema({
+const poll = new Schema({
   name: String,
   url: String,
-  createdBy: { type: schema.ObjectId, ref: 'UserModel' },
+  createdBy: { type: Schema.ObjectId, ref: 'UserModel' },
   votes: Number,
   pollOptions: [
     {
