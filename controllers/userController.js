@@ -1,9 +1,8 @@
-const mongoose = require('mongoose');
 const { promisify } = require('es6-promisify');
 
 const UserModel = require('../models/UserModel');
 
-exports.validateSignUp = (req, res, next) => {
+exports.validateSignUp = async (req, res, next) => {
   // express-validator middleware adds these methods to req object in app.js
   req.sanitizeBody('name');
   req.sanitizeBody('email').normalizeEmail({
@@ -22,14 +21,14 @@ exports.validateSignUp = (req, res, next) => {
     .checkBody('confirmPassword', 'Oops, your passwords do not match')
     .equals(req.body.password);
 
-  // Will check all the methods above and return an array of errors.
-  const errors = req.validationErrors();
-
-  if (errors) {
-    console.log(errors);
+  try {
+    // Will check all the methods above and return an array of errors.
+    await req.asyncValidationErrors();
+    next();
+  } catch (errors) {
+    // send the first error msg in the errors array
+    res.status(401).send(errors[0].msg);
   }
-
-  next();
 };
 
 exports.register = async (req, res, next) => {
@@ -42,9 +41,12 @@ exports.register = async (req, res, next) => {
   // You have to specify what Object to bind the method to.
   const register = promisify(UserModel.register.bind(UserModel));
 
-  // register() is from the passportLocalMongoose plugin
-  // Will hash the password before saving the user to the database. (like .save())
-  await register(user, req.body.password);
-
-  next();
+  try {
+    // register() is from the passportLocalMongoose plugin
+    // Will hash the password before saving the user to the database. (like .save())
+    await register(user, req.body.password);
+    next();
+  } catch (err) {
+    res.status(401).send(err.message);
+  }
 };
