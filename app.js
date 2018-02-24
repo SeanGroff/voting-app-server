@@ -75,7 +75,7 @@ app.post('/login', authController.login, (req, res) => {
     expiresIn: '24h',
   });
 
-  res.json({ token });
+  res.json({ token, uid: req.user._id });
 });
 
 app.post('/logout', authController.logout);
@@ -94,7 +94,7 @@ app.post(
       expiresIn: '24h',
     });
 
-    res.json({ token });
+    res.json({ token, uid: req.user._id });
   }
 );
 
