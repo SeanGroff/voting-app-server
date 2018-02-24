@@ -75,7 +75,12 @@ app.post('/login', authController.login, (req, res) => {
     expiresIn: '24h',
   });
 
-  res.json({ token, uid: req.user._id });
+  res.json({
+    token,
+    uid: req.user._id,
+    email: req.user.email,
+    name: req.user.name,
+  });
 });
 
 app.post('/logout', authController.logout);
@@ -94,7 +99,12 @@ app.post(
       expiresIn: '24h',
     });
 
-    res.json({ token, uid: req.user._id });
+    res.json({
+      token,
+      uid: req.user._id,
+      email: req.user.email,
+      name: req.user.name,
+    });
   }
 );
 
