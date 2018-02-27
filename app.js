@@ -3,6 +3,7 @@ const app = require('express')();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
@@ -33,7 +34,14 @@ app.use(expressValidator());
 app.use(cors());
 
 // Setup express session
-app.use(session({ secret, resave: false, saveUninitialized: false }));
+app.use(
+  session({
+    secret,
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ url: config.database }),
+  })
+);
 
 // Body Parser
 app.use(bodyParser.urlencoded({ extended: false }));
