@@ -37,7 +37,7 @@ module.exports = {
     },
     async polls(root, args) {
       let polls = [];
-      if (typeof args.uid === String && args.uid) {
+      if (typeof args.uid === 'string' && args.uid) {
         polls = await PollModel.find({ createdBy: args.uid });
       } else {
         polls = await PollModel.find();
@@ -52,15 +52,19 @@ module.exports = {
       }));
     },
   },
-  // Mutation: {
-  // Vote
-  // Create a poll
-  // Delete own poll
-  // Add new option to poll
-  // Register Account
-  // Login
-  // Logout
-  // },
+  Mutation: {
+    // Vote
+    // Create a poll
+    createPoll: (_, { id, poll }) => {
+      console.log(id);
+      console.log(poll); // poll name & poll options
+      // new PollModel & use shortid npm package for url
+      const newPoll = '';
+      return newPoll;
+    },
+    // Delete own poll
+    // Add new option to poll
+  },
   User: {},
   Poll: {
     createdBy({ createdBy }) {

@@ -6,13 +6,6 @@ const resolvers = require('./resolvers');
 // const mocks = require('./mocks');
 
 const typeDefs = `
-type Query {
-  user(uid: String!): User
-  users: [User]
-  poll(pid: String!): Poll
-  polls(uid: String): [Poll]
-}
-
 type User {
   id: String
   name: String
@@ -32,6 +25,17 @@ type Poll {
   votes: Int
   url: String
   pollOptions: [PollOption]
+}
+
+type Query {
+  user(uid: String!): User
+  users: [User]
+  poll(pid: String!): Poll
+  polls(uid: String): [Poll]
+}
+
+type Mutation {
+  createPoll(uid: String!): Poll
 }
 `;
 
