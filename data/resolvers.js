@@ -1,3 +1,6 @@
+const shortid = require('shortid');
+
+const config = require('../config');
 const UserModel = require('../models/UserModel');
 const PollModel = require('../models/PollModel');
 
@@ -55,12 +58,23 @@ module.exports = {
   Mutation: {
     // Vote
     // Create a poll
-    createPoll: (_, { id, poll }) => {
-      console.log(id);
-      console.log(poll); // poll name & poll options
-      // new PollModel & use shortid npm package for url
-      const newPoll = '';
-      return newPoll;
+    createPoll: async (parent, { uid, pollName, pollOptions }, context) => {
+      const newPoll = new PollModel({
+        name: pollName,
+        url: `${config.baseUrl}/polls/${shortid.generate()}`,
+        createdBy: uid,
+        votes: 0,
+        pollOptions: pollOptions.map(option => ({
+          name: option.name,
+          votes: 0,
+        })),
+      });
+
+      try {
+        return await newPoll.save();
+      } catch (err) {
+        console.log(err);
+      }
     },
     // Delete own poll
     // Add new option to poll

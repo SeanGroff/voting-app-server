@@ -18,6 +18,10 @@ type PollOption {
   votes: Int
 }
 
+input PollOptionInput {
+  name: String
+}
+
 type Poll {
   id: String
   createdBy: User
@@ -35,7 +39,7 @@ type Query {
 }
 
 type Mutation {
-  createPoll(uid: String!): Poll
+  createPoll(uid: String!, pollName: String!, pollOptions: [PollOptionInput]!): Poll
 }
 `;
 
