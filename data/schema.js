@@ -12,6 +12,12 @@ type User {
   email: String
 }
 
+input UserInput {
+  id: String
+  name: String
+  email: String
+}
+
 type PollOption {
   id: String
   name: String
@@ -39,7 +45,7 @@ type Query {
 }
 
 type Mutation {
-  createPoll(uid: String!, pollName: String!, pollOptions: [PollOptionInput]!): Poll
+  createPoll(user: UserInput!, pollName: String!, pollOptions: [PollOptionInput]!): Poll
 }
 `;
 

@@ -29,7 +29,7 @@ module.exports = {
         createdBy,
         votes,
         pollOptions,
-      } = await PollModel.findOne({ _id: args.pid });
+      } = await PollModel.findOne({ _id: args.pid }).populate('createdBy');
       return {
         id: _id,
         name,
@@ -41,15 +41,21 @@ module.exports = {
     async polls(root, args) {
       let polls = [];
       if (typeof args.uid === 'string' && args.uid) {
-        polls = await PollModel.find({ createdBy: args.uid });
+        polls = await PollModel.find({ createdBy: args.uid }).populate(
+          'createdBy'
+        );
       } else {
-        polls = await PollModel.find();
+        polls = await PollModel.find().populate('createdBy');
       }
       return polls.map(poll => ({
         id: poll._id,
         name: poll.name,
         url: poll.url,
-        createdBy: poll.createdBy,
+        createdBy: {
+          id: poll.createdBy._id,
+          name: poll.createdBy.name,
+          email: poll.createdBy.email,
+        },
         votes: poll.votes,
         pollOptions: poll.pollOptions,
       }));
@@ -58,11 +64,15 @@ module.exports = {
   Mutation: {
     // Vote
     // Create a poll
-    createPoll: async (parent, { uid, pollName, pollOptions }, context) => {
+    createPoll: async (parent, { user, pollName, pollOptions }, context) => {
       const newPoll = new PollModel({
         name: pollName,
         url: `${config.baseUrl}/polls/${shortid.generate()}`,
-        createdBy: uid,
+        createdBy: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
         votes: 0,
         pollOptions: pollOptions.map(option => ({
           name: option.name,
@@ -82,7 +92,11 @@ module.exports = {
   User: {},
   Poll: {
     createdBy({ createdBy }) {
-      return UserModel.findOne({ _id: createdBy });
+      return {
+        id: createdBy.id,
+        name: createdBy.name,
+        email: createdBy.email,
+      };
     },
     pollOptions(poll) {
       return poll.pollOptions.map(option => ({
