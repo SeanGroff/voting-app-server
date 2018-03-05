@@ -29,7 +29,7 @@ module.exports = {
         createdBy,
         votes,
         pollOptions,
-      } = await PollModel.findOne({ _id: args.pid }).populate('createdBy');
+      } = await PollModel.findOne({ _id: args.pid });
       return {
         id: _id,
         name,
@@ -41,11 +41,9 @@ module.exports = {
     async polls(root, args) {
       let polls = [];
       if (typeof args.uid === 'string' && args.uid) {
-        polls = await PollModel.find({ createdBy: args.uid }).populate(
-          'createdBy'
-        );
+        polls = await PollModel.find({ createdBy: args.uid });
       } else {
-        polls = await PollModel.find().populate('createdBy');
+        polls = await PollModel.find();
       }
       return polls.map(poll => ({
         id: poll._id,

@@ -4,7 +4,11 @@ const Schema = mongoose.Schema;
 const poll = new Schema({
   name: String,
   url: String,
-  createdBy: { type: Schema.ObjectId, ref: 'UserModel' },
+  createdBy: {
+    id: String,
+    name: String,
+    email: String,
+  },
   votes: Number,
   pollOptions: [
     {
