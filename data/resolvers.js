@@ -75,6 +75,7 @@ module.exports = {
         pollOptions: pollOptions.map(option => ({
           name: option.name,
           votes: 0,
+          voters: [],
         })),
       });
 
@@ -101,8 +102,15 @@ module.exports = {
         id: option._id,
         name: option.name,
         votes: option.votes,
+        voters: option.voters,
       }));
     },
   },
-  PollOption: {},
+  PollOption: {
+    voters(pollOption) {
+      return pollOption.voters.map(voter => ({
+        id: voter,
+      }));
+    },
+  },
 };

@@ -18,10 +18,15 @@ input UserInput {
   email: String
 }
 
+type Voter {
+  id: String
+}
+
 type PollOption {
   id: String
   name: String
   votes: Int
+  voters: [Voter]
 }
 
 input PollOptionInput {

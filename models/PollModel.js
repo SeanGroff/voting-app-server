@@ -14,6 +14,11 @@ const poll = new Schema({
     {
       name: String,
       votes: Number,
+      voters: [
+        {
+          id: String,
+        },
+      ],
     },
   ],
 });
