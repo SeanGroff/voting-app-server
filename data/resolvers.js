@@ -61,6 +61,32 @@ module.exports = {
   },
   Mutation: {
     // Vote
+    vote: async (parent, { pollId, userId, pollOption }, context) => {
+      try {
+        const poll = await PollModel.findById(pollId);
+
+        const optionIndex = poll.pollOptions.indexOf({ _id: pollOption.id });
+        const pollToUpdate = poll.pollOptions[optionIndex];
+        const updatedPollOptions = poll.pollOptions.splice(optionIndex, 1, {
+          ...pollToUpdate,
+          votes: (pollToUpdate.votes += 1),
+          voters: pollToUpdate.push({ id: userId }),
+        });
+
+        const updatedPoll = await PollModel.findByIdAndUpdate(
+          pollId,
+          {
+            pollOptions: updatedPollOptions,
+          },
+          { new: true }
+        );
+
+        console.log(updatedPoll);
+        return updatedPoll;
+      } catch (err) {
+        console.log(err);
+      }
+    },
     // Create a poll
     createPoll: async (parent, { user, pollName, pollOptions }, context) => {
       const newPoll = new PollModel({
