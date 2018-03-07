@@ -61,28 +61,33 @@ module.exports = {
   },
   Mutation: {
     // Vote
-    vote: async (parent, { pollId, userId, pollOption }, context) => {
+    vote: async (parent, { pollId, pollOption }, context) => {
       try {
+        // find Poll
         const poll = await PollModel.findById(pollId);
 
-        const optionIndex = poll.pollOptions.indexOf({ _id: pollOption.id });
-        const pollToUpdate = poll.pollOptions[optionIndex];
-        const updatedPollOptions = poll.pollOptions.splice(optionIndex, 1, {
-          ...pollToUpdate,
-          votes: (pollToUpdate.votes += 1),
-          voters: pollToUpdate.push({ id: userId }),
-        });
+        // Get index of pollOption by id to be updated
+        const optionIndex = poll.pollOptions.findIndex(
+          option => String(option._id) === String(pollOption.id)
+        );
 
-        const updatedPoll = await PollModel.findByIdAndUpdate(
+        // Poll Option to be updated
+        const optionToUpdate = poll.pollOptions[optionIndex];
+
+        // Find Poll by Poll ID then update Poll.pollOptions
+        const { pollOptions } = await PollModel.findByIdAndUpdate(
           pollId,
           {
-            pollOptions: updatedPollOptions,
+            pollOptions: poll.pollOptions.splice(optionIndex, 1, {
+              ...optionToUpdate,
+              votes: (optionToUpdate.votes += 1),
+              voters: optionToUpdate.voters.push(pollOption.voters[0]),
+            }),
           },
           { new: true }
         );
 
-        console.log(updatedPoll);
-        return updatedPoll;
+        return pollOptions[optionIndex];
       } catch (err) {
         console.log(err);
       }
@@ -128,15 +133,11 @@ module.exports = {
         id: option._id,
         name: option.name,
         votes: option.votes,
-        voters: option.voters,
+        voters: option.voters.map(voter => ({
+          id: voter.id,
+        })),
       }));
     },
   },
-  PollOption: {
-    voters(pollOption) {
-      return pollOption.voters.map(voter => ({
-        id: voter,
-      }));
-    },
-  },
+  PollOption: {},
 };

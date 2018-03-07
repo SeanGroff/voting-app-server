@@ -61,7 +61,7 @@ type Query {
 
 type Mutation {
   createPoll(user: UserInput!, pollName: String!, pollOptions: [PollOptionInput]!): Poll
-  vote(pollId: String!, userId: String!, pollOption: PollOptionVoteInput!): PollOption
+  vote(pollId: String!, pollOption: PollOptionVoteInput!): PollOption
 }
 `;
 
