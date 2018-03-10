@@ -66,28 +66,27 @@ module.exports = {
         // find Poll
         const poll = await PollModel.findById(pollId);
 
-        // Get index of pollOption by id to be updated
-        const optionIndex = poll.pollOptions.findIndex(
-          option => String(option._id) === String(pollOption.id)
-        );
+        // Convert Mongo Document to JS Object
+        const pollObj = poll.toObject();
 
-        // Poll Option to be updated
-        const optionToUpdate = poll.pollOptions[optionIndex];
+        // map over poll options, update the correct poll option
+        const updatedPoll = {
+          ...pollObj,
+          pollOptions: pollObj.pollOptions.map((option, index) => {
+            if (String(option._id) !== String(pollOption.id)) return option;
+
+            return {
+              ...option,
+              votes: option.votes + 1,
+              voters: [...option.voters, pollOption.voter],
+            };
+          }),
+        };
 
         // Find Poll by Poll ID then update Poll.pollOptions
-        const { pollOptions } = await PollModel.findByIdAndUpdate(
-          pollId,
-          {
-            pollOptions: poll.pollOptions.splice(optionIndex, 1, {
-              ...optionToUpdate,
-              votes: (optionToUpdate.votes += 1),
-              voters: optionToUpdate.voters.push(pollOption.voters[0]),
-            }),
-          },
-          { new: true }
-        );
-
-        return pollOptions[optionIndex];
+        return PollModel.findByIdAndUpdate(pollId, updatedPoll, {
+          new: true,
+        });
       } catch (err) {
         console.log(err);
       }

@@ -39,8 +39,7 @@ input PollOptionInput {
 
 input PollOptionVoteInput {
   id: String
-  votes: Int
-  voters: [VoterInput]
+  voter: VoterInput
 }
 
 type Poll {
@@ -61,7 +60,7 @@ type Query {
 
 type Mutation {
   createPoll(user: UserInput!, pollName: String!, pollOptions: [PollOptionInput]!): Poll
-  vote(pollId: String!, pollOption: PollOptionVoteInput!): PollOption
+  vote(pollId: String!, pollOption: PollOptionVoteInput!): Poll
 }
 `;
 
