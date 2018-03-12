@@ -144,6 +144,28 @@ module.exports = {
     },
     // Delete own poll
     // Add new option to poll
+    addOption: async (parent, { pollId, optionName }, context) => {
+      try {
+        const Poll = await PollModel.findById(pollId);
+        const pollObj = Poll.toObject();
+
+        const updatedPoll = {
+          ...pollObj,
+          pollOptions: [
+            ...pollObj.pollOptions,
+            {
+              name: optionName,
+              votes: 0,
+              voters: [],
+            },
+          ],
+        };
+
+        return PollModel.findByIdAndUpdate(pollId, updatedPoll, { new: true });
+      } catch (err) {
+        console.log(err);
+      }
+    },
   },
   User: {},
   Poll: {
