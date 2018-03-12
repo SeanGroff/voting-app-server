@@ -91,6 +91,33 @@ module.exports = {
         console.log(err);
       }
     },
+    // Remove Vote
+    removeVote: async (parent, { pollId, pollOption }, context) => {
+      try {
+        const Poll = await PollModel.findById(pollId);
+        const pollObj = Poll.toObject();
+
+        const updatedPoll = {
+          ...pollObj,
+          pollOptions: pollObj.pollOptions.map((option, index) => {
+            if (String(option._id) !== String(pollOption.id)) return option;
+
+            return {
+              ...option,
+              votes: option.votes - 1,
+              voters: [
+                ...option.voters.slice(0, index),
+                ...option.voters.slice(index + 1),
+              ],
+            };
+          }),
+        };
+
+        return PollModel.findByIdAndUpdate(pollId, updatedPoll, { new: true });
+      } catch (err) {
+        console.log(err);
+      }
+    },
     // Create a poll
     createPoll: async (parent, { user, pollName, pollOptions }, context) => {
       const newPoll = new PollModel({
