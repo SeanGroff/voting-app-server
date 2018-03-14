@@ -22,7 +22,7 @@ module.exports = {
         email: user.email,
       }));
     },
-    async poll(root, args) {
+    async poll(root, args, context) {
       const {
         _id,
         name,
@@ -38,9 +38,10 @@ module.exports = {
         pollOptions,
       };
     },
-    async polls(root, args) {
+    async polls(root, args, context) {
       let polls = [];
       if (typeof args.uid === 'string' && args.uid) {
+        // verify JWT first
         polls = await PollModel.find({ createdBy: args.uid });
       } else {
         polls = await PollModel.find();
@@ -120,6 +121,7 @@ module.exports = {
     },
     // Create a poll
     createPoll: async (parent, { user, pollName, pollOptions }, context) => {
+      // Verify JWT token first
       const newPoll = new PollModel({
         name: pollName,
         url: `${config.baseUrl}/polls/${shortid.generate()}`,
@@ -143,8 +145,13 @@ module.exports = {
       }
     },
     // Delete own poll
+    // deletePoll: async (parent, { pollId }, context) => {
+    //   // verify JWT token
+
+    // },
     // Add new option to poll
     addOption: async (parent, { pollId, optionName }, context) => {
+      // verify JWT token first
       try {
         const Poll = await PollModel.findById(pollId);
         const pollObj = Poll.toObject();

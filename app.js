@@ -56,7 +56,7 @@ app.use(
   bodyParser.json(),
   graphqlExpress(req => ({
     schema,
-    context: { token: req.get('token') },
+    context: { token: req.get('authorization') },
   }))
 );
 
