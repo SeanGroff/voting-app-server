@@ -1,4 +1,5 @@
-// https://nuxtjs.org/examples/auth-routes/
+require('dotenv').config();
+
 const app = require('express')();
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -26,7 +27,7 @@ mongoose
   .then(() => console.log('Successfully connected to DB!'))
   .catch(err => console.log(`Error connecting to DB: ${err}`));
 
-const secret = config.secret();
+const secret = process.env.SECRET;
 
 // Exposes a bunch of methods for validating date. (Mainly in the userController)
 app.use(expressValidator());
@@ -56,7 +57,7 @@ app.use(
   bodyParser.json(),
   graphqlExpress(req => ({
     schema,
-    context: { token: req.get('authorization') },
+    context: { token: req.get('Authorization') },
   }))
 );
 

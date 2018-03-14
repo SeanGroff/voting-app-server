@@ -60,6 +60,7 @@ type Query {
 
 type Mutation {
   createPoll(user: UserInput!, pollName: String!, pollOptions: [PollOptionInput]!): Poll
+  removePoll(pollId: String!): Poll
   vote(pollId: String!, pollOption: PollOptionVoteInput!): Poll
   removeVote(pollId: String!, pollOption: PollOptionVoteInput!): Poll
   addOption(pollId: String!, optionName: String!): Poll

@@ -1,4 +1,5 @@
 const shortid = require('shortid');
+const jwt = require('jsonwebtoken');
 
 const config = require('../config');
 const UserModel = require('../models/UserModel');
@@ -145,10 +146,21 @@ module.exports = {
       }
     },
     // Delete own poll
-    // deletePoll: async (parent, { pollId }, context) => {
-    //   // verify JWT token
-
-    // },
+    removePoll: async (parent, { pollId }, context) => {
+      // verify JWT token
+      // const token = context.Authorization.split(' ')[1]; ?
+      // invalid token - synchronous
+      // try {
+      //   var decoded = jwt.verify(token, process.env.SECRET);
+      // } catch (err) {
+      //   // err
+      // }
+      try {
+        return PollModel.findByIdAndRemove(pollId);
+      } catch (err) {
+        console.log(err);
+      }
+    },
     // Add new option to poll
     addOption: async (parent, { pollId, optionName }, context) => {
       // verify JWT token first
