@@ -747,6 +747,10 @@ decode-uri-component@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
 
+deep-equal@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-1.0.1.tgz#f5d260292b660e084eff4cdbc9f08ad3247448b5"
+
 deep-extend@~0.4.0:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.4.2.tgz#48b699c27e334bf89f10892be432f6e4c7d34a7f"
@@ -1429,6 +1433,13 @@ graphql-extensions@^0.0.x:
   dependencies:
     core-js "^2.5.3"
     source-map-support "^0.5.1"
+
+graphql-resolvers@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/graphql-resolvers/-/graphql-resolvers-0.2.2.tgz#911310367cf16a70b97b73da9f19d9598137851f"
+  dependencies:
+    deep-equal "^1.0.1"
+    object-path "^0.11.4"
 
 graphql-tools@^2.18.0:
   version "2.21.0"
@@ -2379,6 +2390,10 @@ object-copy@^0.1.0:
 object-hash@^1.1.4:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-1.2.0.tgz#e96af0e96981996a1d47f88ead8f74f1ebc4422b"
+
+object-path@^0.11.4:
+  version "0.11.4"
+  resolved "https://registry.yarnpkg.com/object-path/-/object-path-0.11.4.tgz#370ae752fbf37de3ea70a861c23bba8915691949"
 
 object-visit@^1.0.0:
   version "1.0.1"

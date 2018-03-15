@@ -19,6 +19,7 @@
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
     "graphql": "^0.12.3",
+    "graphql-resolvers": "^0.2.2",
     "graphql-tools": "^2.18.0",
     "jsonwebtoken": "^8.1.1",
     "mongoose": "^5.0.1",

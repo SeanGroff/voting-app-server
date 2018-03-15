@@ -1,9 +1,19 @@
 const shortid = require('shortid');
 const jwt = require('jsonwebtoken');
+const { skip, combineResolvers } = require('graphql-resolvers');
 
 const config = require('../config');
 const UserModel = require('../models/UserModel');
 const PollModel = require('../models/PollModel');
+
+const isAuthenticated = (parent, args, { token }) => {
+  try {
+    const decoded = jwt.verify(token.split(' ')[1], process.env.SECRET);
+    if (decoded) return skip;
+  } catch (err) {
+    return new Error('Not authenticated');
+  }
+};
 
 module.exports = {
   Query: {
@@ -146,21 +156,16 @@ module.exports = {
       }
     },
     // Delete own poll
-    removePoll: async (parent, { pollId }, context) => {
-      // verify JWT token
-      // const token = context.Authorization.split(' ')[1]; ?
-      // invalid token - synchronous
-      // try {
-      //   var decoded = jwt.verify(token, process.env.SECRET);
-      // } catch (err) {
-      //   // err
-      // }
-      try {
-        return PollModel.findByIdAndRemove(pollId);
-      } catch (err) {
-        console.log(err);
+    removePoll: combineResolvers(
+      isAuthenticated,
+      async (parent, { pollId }, context) => {
+        try {
+          return PollModel.findByIdAndRemove(pollId);
+        } catch (err) {
+          console.log(err);
+        }
       }
-    },
+    ),
     // Add new option to poll
     addOption: async (parent, { pollId, optionName }, context) => {
       // verify JWT token first

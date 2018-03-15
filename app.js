@@ -27,8 +27,6 @@ mongoose
   .then(() => console.log('Successfully connected to DB!'))
   .catch(err => console.log(`Error connecting to DB: ${err}`));
 
-const secret = process.env.SECRET;
-
 // Exposes a bunch of methods for validating date. (Mainly in the userController)
 app.use(expressValidator());
 
@@ -37,7 +35,7 @@ app.use(cors());
 // Setup express session
 app.use(
   session({
-    secret,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({ url: config.database }),
@@ -80,7 +78,7 @@ app.post('/login', authController.login, (req, res) => {
     id: req.user._id,
   };
 
-  const token = jwt.sign(payload, secret, {
+  const token = jwt.sign(payload, process.env.SECRET, {
     expiresIn: '24h',
   });
 
@@ -104,7 +102,7 @@ app.post(
       id: req.user._id,
     };
 
-    const token = jwt.sign(payload, secret, {
+    const token = jwt.sign(payload, process.env.SECRET, {
       expiresIn: '24h',
     });
 
