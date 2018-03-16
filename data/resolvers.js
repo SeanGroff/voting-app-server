@@ -52,7 +52,6 @@ module.exports = {
     async polls(root, args, context) {
       let polls = [];
       if (typeof args.uid === 'string' && args.uid) {
-        // verify JWT first
         polls = await PollModel.find({ createdBy: args.uid });
       } else {
         polls = await PollModel.find();
@@ -131,30 +130,32 @@ module.exports = {
       }
     },
     // Create a poll
-    createPoll: async (parent, { user, pollName, pollOptions }, context) => {
-      // Verify JWT token first
-      const newPoll = new PollModel({
-        name: pollName,
-        url: `${config.baseUrl}/polls/${shortid.generate()}`,
-        createdBy: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
-        votes: 0,
-        pollOptions: pollOptions.map(option => ({
-          name: option.name,
+    createPoll: combineResolvers(
+      isAuthenticated,
+      async (parent, { user, pollName, pollOptions }, context) => {
+        const newPoll = new PollModel({
+          name: pollName,
+          url: `${config.baseUrl}/polls/${shortid.generate()}`,
+          createdBy: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          },
           votes: 0,
-          voters: [],
-        })),
-      });
+          pollOptions: pollOptions.map(option => ({
+            name: option.name,
+            votes: 0,
+            voters: [],
+          })),
+        });
 
-      try {
-        return await newPoll.save();
-      } catch (err) {
-        console.log(err);
+        try {
+          return await newPoll.save();
+        } catch (err) {
+          console.log(err);
+        }
       }
-    },
+    ),
     // Delete own poll
     removePoll: combineResolvers(
       isAuthenticated,
@@ -167,29 +168,33 @@ module.exports = {
       }
     ),
     // Add new option to poll
-    addOption: async (parent, { pollId, optionName }, context) => {
-      // verify JWT token first
-      try {
-        const Poll = await PollModel.findById(pollId);
-        const pollObj = Poll.toObject();
+    addOption: combineResolvers(
+      isAuthenticated,
+      async (parent, { pollId, optionName }, context) => {
+        try {
+          const Poll = await PollModel.findById(pollId);
+          const pollObj = Poll.toObject();
 
-        const updatedPoll = {
-          ...pollObj,
-          pollOptions: [
-            ...pollObj.pollOptions,
-            {
-              name: optionName,
-              votes: 0,
-              voters: [],
-            },
-          ],
-        };
+          const updatedPoll = {
+            ...pollObj,
+            pollOptions: [
+              ...pollObj.pollOptions,
+              {
+                name: optionName,
+                votes: 0,
+                voters: [],
+              },
+            ],
+          };
 
-        return PollModel.findByIdAndUpdate(pollId, updatedPoll, { new: true });
-      } catch (err) {
-        console.log(err);
+          return PollModel.findByIdAndUpdate(pollId, updatedPoll, {
+            new: true,
+          });
+        } catch (err) {
+          console.log(err);
+        }
       }
-    },
+    ),
   },
   User: {},
   Poll: {
