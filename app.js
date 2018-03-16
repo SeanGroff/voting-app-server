@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
 const expressValidator = require('express-validator');
+const requestIp = require('request-ip');
 const passport = require('passport');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 
@@ -55,7 +56,10 @@ app.use(
   bodyParser.json(),
   graphqlExpress(req => ({
     schema,
-    context: { token: req.get('Authorization') },
+    context: {
+      token: req.get('Authorization'),
+      clientIp: requestIp.getClientIp(req),
+    },
   }))
 );
 

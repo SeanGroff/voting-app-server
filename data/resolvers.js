@@ -72,7 +72,9 @@ module.exports = {
   },
   Mutation: {
     // Vote
-    vote: async (parent, { pollId, pollOption }, context) => {
+    vote: async (parent, { pollId, pollOption }, { clientIp }) => {
+      const voter = pollOption.voter ? pollOption.voter : { id: clientIp };
+      console.log(voter);
       try {
         // find Poll
         const poll = await PollModel.findById(pollId);
