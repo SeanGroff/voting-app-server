@@ -77,6 +77,23 @@ app.use((err, req, res, next) => {
 });
 
 // Routes
+app.get('/secret', (req, res) => {
+  try {
+    const token = req.headers.authorization
+      ? req.headers.authorization.split(' ')[1]
+      : undefined;
+
+    const decoded = jwt.verify(token, process.env.SECRET);
+
+    if (decoded) {
+      res.send({ authorized: true });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(403).send({ authorized: false });
+  }
+});
+
 app.post('/login', authController.login, (req, res) => {
   const payload = {
     id: req.user._id,
