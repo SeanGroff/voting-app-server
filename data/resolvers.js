@@ -61,7 +61,7 @@ module.exports = {
         name: poll.name,
         url: poll.url,
         createdBy: {
-          id: poll.createdBy._id,
+          id: poll.createdBy.id,
           name: poll.createdBy.name,
           email: poll.createdBy.email,
         },
