@@ -18,24 +18,15 @@ const userSchema = new Schema({
     minLength: 1,
     trim: true,
     lowercase: true,
-    // unique: true, // uncomment after fake users are removed
+    unique: true,
     validate: {
       validator: validator.isEmail,
       message: '{VALUE} is not a valid email',
     },
   },
-  // tokens: [
-  //   {
-  //     access: {
-  //       type: String,
-  //       required: true,
-  //     },
-  //     token: {
-  //       type: String,
-  //       required: true,
-  //     },
-  //   },
-  // ],
+  ip: {
+    type: String,
+  },
 });
 
 userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });

@@ -10,20 +10,22 @@ type User {
   id: String
   name: String
   email: String
+  ip: String
 }
 
 input UserInput {
   id: String
   name: String
   email: String
+  ip: String
 }
 
 type Voter {
-  id: String
+  ip: String
 }
 
 input VoterInput {
-  id: String
+  ip: String
 }
 
 type PollOption {

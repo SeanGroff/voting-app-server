@@ -108,6 +108,7 @@ app.post('/login', authController.login, (req, res) => {
     uid: req.user._id,
     email: req.user.email,
     name: req.user.name,
+    ip: req.user.ip,
   });
 });
 
@@ -119,6 +120,7 @@ app.post(
   userController.register,
   authController.login,
   (req, res) => {
+    console.log(req.user.ip);
     const payload = {
       id: req.user._id,
     };
@@ -132,6 +134,7 @@ app.post(
       uid: req.user._id,
       email: req.user.email,
       name: req.user.name,
+      ip: req.user.ip,
     });
   }
 );

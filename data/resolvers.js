@@ -17,12 +17,13 @@ const isAuthenticated = (parent, args, { token }) => {
 
 module.exports = {
   Query: {
-    async user(root, args) {
-      const { _id, name, email } = await UserModel.findOne({ _id: args.uid });
+    async user(root, { uid }) {
+      const { _id, name, email, ip } = await UserModel.findOne({ _id: uid });
       return {
         id: _id,
         name,
         email,
+        ip,
       };
     },
     async users(root, args) {
@@ -31,6 +32,7 @@ module.exports = {
         id: user._id,
         name: user.name,
         email: user.email,
+        ip: user.ip,
       }));
     },
     async poll(root, args, context) {
@@ -64,6 +66,7 @@ module.exports = {
           id: poll.createdBy.id,
           name: poll.createdBy.name,
           email: poll.createdBy.email,
+          ip: poll.createdBy.ip,
         },
         votes: poll.votes,
         pollOptions: poll.pollOptions,
@@ -73,8 +76,6 @@ module.exports = {
   Mutation: {
     // Vote
     vote: async (parent, { pollId, pollOption }, { clientIp }) => {
-      const voter = pollOption.voter ? pollOption.voter : { id: clientIp };
-      console.log(voter);
       try {
         // find Poll
         const poll = await PollModel.findById(pollId);
@@ -91,7 +92,7 @@ module.exports = {
             return {
               ...option,
               votes: option.votes + 1,
-              voters: [...option.voters, pollOption.voter],
+              voters: [...option.voters, clientIp],
             };
           }),
         };
@@ -105,7 +106,7 @@ module.exports = {
       }
     },
     // Remove Vote
-    removeVote: async (parent, { pollId, pollOption }, context) => {
+    removeVote: async (parent, { pollId, pollOption }) => {
       try {
         const Poll = await PollModel.findById(pollId);
         const pollObj = Poll.toObject();
@@ -134,7 +135,7 @@ module.exports = {
     // Create a poll
     createPoll: combineResolvers(
       isAuthenticated,
-      async (parent, { user, pollName, pollOptions }, context) => {
+      async (parent, { user, pollName, pollOptions }, { clientIp }) => {
         const newPoll = new PollModel({
           name: pollName,
           url: `${config.baseUrl}/polls/${shortid.generate()}`,
@@ -142,6 +143,7 @@ module.exports = {
             id: user.id,
             name: user.name,
             email: user.email,
+            ip: clientIp,
           },
           votes: 0,
           pollOptions: pollOptions.map(option => ({
@@ -161,7 +163,7 @@ module.exports = {
     // Delete own poll
     removePoll: combineResolvers(
       isAuthenticated,
-      async (parent, { pollId }, context) => {
+      async (parent, { pollId }) => {
         try {
           return PollModel.findByIdAndRemove(pollId);
         } catch (err) {
@@ -172,7 +174,7 @@ module.exports = {
     // Add new option to poll
     addOption: combineResolvers(
       isAuthenticated,
-      async (parent, { pollId, optionName }, context) => {
+      async (parent, { pollId, optionName }) => {
         try {
           const Poll = await PollModel.findById(pollId);
           const pollObj = Poll.toObject();
@@ -205,6 +207,7 @@ module.exports = {
         id: createdBy.id,
         name: createdBy.name,
         email: createdBy.email,
+        ip: createdBy.ip,
       };
     },
     pollOptions(poll) {
@@ -213,7 +216,7 @@ module.exports = {
         name: option.name,
         votes: option.votes,
         voters: option.voters.map(voter => ({
-          id: voter.id,
+          ip: voter.ip,
         })),
       }));
     },

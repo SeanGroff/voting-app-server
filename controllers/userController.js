@@ -1,3 +1,4 @@
+const requestIp = require('request-ip');
 const { promisify } = require('es6-promisify');
 
 const UserModel = require('../models/UserModel');
@@ -35,6 +36,7 @@ exports.register = async (req, res, next) => {
   const user = new UserModel({
     name: req.body.name,
     email: req.body.email,
+    ip: requestIp.getClientIp(req),
   });
 
   // If Promisifying a method on an object like User.register.

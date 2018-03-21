@@ -8,6 +8,7 @@ const poll = new Schema({
     id: String,
     name: String,
     email: String,
+    ip: String,
   },
   votes: Number,
   pollOptions: [
