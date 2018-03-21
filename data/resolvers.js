@@ -49,10 +49,10 @@ module.exports = {
         pollOptions,
       };
     },
-    async polls(root, args, context) {
+    async polls(root, { uid }, context) {
       let polls = [];
-      if (typeof args.uid === 'string' && args.uid) {
-        polls = await PollModel.find({ createdBy: args.uid });
+      if (typeof uid === 'string' && uid) {
+        polls = await PollModel.find({ 'createdBy.id': uid });
       } else {
         polls = await PollModel.find();
       }
