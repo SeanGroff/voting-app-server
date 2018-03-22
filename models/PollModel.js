@@ -17,7 +17,7 @@ const poll = new Schema({
       votes: Number,
       voters: [
         {
-          id: String,
+          ip: String,
         },
       ],
     },

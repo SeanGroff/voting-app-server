@@ -41,7 +41,6 @@ input PollOptionInput {
 
 input PollOptionVoteInput {
   id: String
-  voter: VoterInput
 }
 
 type Poll {

@@ -26,6 +26,7 @@ module.exports = {
         ip,
       };
     },
+
     async users(root, args) {
       const users = await UserModel.find();
       return users.map(user => ({
@@ -35,6 +36,7 @@ module.exports = {
         ip: user.ip,
       }));
     },
+
     async poll(root, args, context) {
       const {
         _id,
@@ -51,6 +53,7 @@ module.exports = {
         pollOptions,
       };
     },
+
     async polls(root, { uid }, context) {
       let polls = [];
       if (typeof uid === 'string' && uid) {
@@ -73,16 +76,15 @@ module.exports = {
       }));
     },
   },
+
   Mutation: {
     // Vote
     vote: async (parent, { pollId, pollOption }, { clientIp }) => {
       try {
         // find Poll
         const poll = await PollModel.findById(pollId);
-
         // Convert Mongo Document to JS Object
         const pollObj = poll.toObject();
-
         // map over poll options, update the correct poll option
         const updatedPoll = {
           ...pollObj,
@@ -92,7 +94,7 @@ module.exports = {
             return {
               ...option,
               votes: option.votes + 1,
-              voters: [...option.voters, clientIp],
+              voters: [...option.voters, { ip: clientIp }],
             };
           }),
         };
