@@ -77,6 +77,10 @@ app.use((err, req, res, next) => {
 });
 
 // Routes
+app.get('/ip', (req, res) => {
+  res.send({ ip: requestIp.getClientIp(req) });
+});
+
 app.get('/secret', (req, res) => {
   try {
     const token = req.headers.authorization
