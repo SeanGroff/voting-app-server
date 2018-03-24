@@ -108,7 +108,7 @@ module.exports = {
       }
     },
     // Remove Vote
-    removeVote: async (parent, { pollId, pollOption }) => {
+    removeVote: async (parent, { pollId, pollOption }, { clientIp }) => {
       try {
         const Poll = await PollModel.findById(pollId);
         const pollObj = Poll.toObject();
@@ -121,10 +121,7 @@ module.exports = {
             return {
               ...option,
               votes: option.votes - 1,
-              voters: [
-                ...option.voters.slice(0, index),
-                ...option.voters.slice(index + 1),
-              ],
+              voters: option.voters.filter(voter => voter.ip !== clientIp),
             };
           }),
         };
