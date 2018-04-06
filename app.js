@@ -1,12 +1,14 @@
 require('dotenv').config();
 
-const app = require('express')();
+const express = require('express');
+const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const path = require('path');
 const jwt = require('jsonwebtoken');
 const expressValidator = require('express-validator');
 const requestIp = require('request-ip');
@@ -64,6 +66,8 @@ app.use(
 );
 
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
+
+app.use(express.static(`${__dirname}/../voting-app-vuejs/dist`));
 
 // Passport Init
 app.use(passport.initialize());
@@ -142,6 +146,10 @@ app.post(
     });
   }
 );
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../voting-app-vuejs/dist/index.html'));
+});
 
 app.listen(PORT, () =>
   console.log(`GraphiQL running on http://localhost:${PORT}/graphiql`)
